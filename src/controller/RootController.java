@@ -1,4 +1,4 @@
-package sample;
+package controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,7 +9,7 @@ import javafx.scene.control.ComboBox;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class Controller implements Initializable {
+public class RootController implements Initializable {
 
     @FXML
     private ComboBox comboBox ;
