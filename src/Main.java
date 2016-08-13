@@ -12,8 +12,8 @@ public class Main extends Application {
 //        primaryStage.setTitle("Hello World");
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
-        primaryStage.setFullScreen(true);
-        primaryStage.setFullScreenExitHint("");
+        //primaryStage.setFullScreen(true);
+        //primaryStage.setFullScreenExitHint("");
         primaryStage.show();
     }
 
