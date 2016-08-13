@@ -1,9 +1,13 @@
 package controller;
 
+import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
+import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.WorldMapLayer;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import javafx.beans.value.ChangeListener;
@@ -24,34 +28,34 @@ import java.util.ResourceBundle;
 
 public class RootController implements Initializable {
     private WorldWindowGLJPanel wwj;
-    private ClickAndGoSelectListener clickAndGoSelectListener ;
+    private Layer worldMapLayer;
 
     @FXML
     private ComboBox<Shape> comboBox;
     @FXML
-    private CheckBox activeClickAndGo;
-    @FXML
     private BorderPane borderPane;
+
+    // TODO could you show a confirm dialog before closing ?
     @FXML
     private void closeHandler() {
         System.exit(0);
     }
+
     @FXML
     private void elevateToIran() {
         View view = wwj.getView();
-
         Position matterhorn = new Position(LatLon.fromDegrees(35.746179170384686d, 51.20007936255699d), 0d);
-
         view.goTo(matterhorn, 3000000d);
     }
 
-    // TODO add actionEvent and getSource in order to make choice either show clickAndGo or not
+    // TODO find a better way for doing this
     @FXML
-    private void activeClickAndGo(){
-        if(activeClickAndGo.isSelected()){
-            wwj.addSelectListener(clickAndGoSelectListener);
-        }else {
-            wwj.removeSelectListener(clickAndGoSelectListener);
+    private void activeClickAndGo(ActionEvent e) {
+        CheckBox activeClickAndGo = (CheckBox) e.getSource();
+        if (activeClickAndGo.isSelected()) {
+            wwj.getModel().getLayers().add(worldMapLayer);
+        } else {
+            wwj.getModel().getLayers().remove(worldMapLayer);
         }
     }
 
@@ -59,7 +63,11 @@ public class RootController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         wwj = new WorldWindowGLJPanel();
-        clickAndGoSelectListener = new ClickAndGoSelectListener(wwj, WorldMapLayer.class);
+        Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
+        wwj.setModel(m);
+
+        worldMapLayer = wwj.getModel().getLayers().getLayerByName("World Map");
+        wwj.getModel().getLayers().remove(worldMapLayer);
 
 
         Shape selectOneOption = new Shape();

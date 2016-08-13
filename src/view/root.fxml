@@ -38,7 +38,7 @@
                         <ComboBox fx:id="comboBox" layoutX="14.0" layoutY="5.0" prefHeight="25.0" prefWidth="103.0"/>
                         <Button layoutX="14.0" layoutY="327.0" mnemonicParsing="false" onAction="#elevateToIran"
                                 prefHeight="25.0" prefWidth="101.0" text="ایران"/>
-                        <CheckBox fx:id="activeClickAndGo" layoutX="28.0" layoutY="48.0" mnemonicParsing="false"
+                        <CheckBox layoutX="28.0" layoutY="48.0" mnemonicParsing="false"
                                   text="مدیریت نمای کلی"
                                   textAlignment="RIGHT" onAction="#activeClickAndGo"/>
                     </children>
