@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="400.0" prefWidth="615.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.RootController">
@@ -39,7 +36,7 @@
                         <Button layoutX="14.0" layoutY="327.0" mnemonicParsing="false" onAction="#elevateToIran"
                                 prefHeight="25.0" prefWidth="101.0" text="ایران"/>
                         <CheckBox layoutX="28.0" layoutY="48.0" mnemonicParsing="false"
-                                  text="مدیریت نمای کلی"
+                                  text="سس"
                                   textAlignment="RIGHT" onAction="#activeClickAndGo"/>
                     </children>
                 </AnchorPane>

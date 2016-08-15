@@ -45,6 +45,9 @@ public class RootController implements Initializable {
     @FXML
     private BorderPane borderPane;
 
+    @FXML
+    private ResourceBundle resources ;
+
     // TODO could you show a confirm dialog before closing ?
     @FXML
     private void closeHandler() {
@@ -86,7 +89,7 @@ public class RootController implements Initializable {
 
         Shape selectOneOption = new Shape();
         selectOneOption.setId(null);
-        selectOneOption.setDisplayName("انتخاب کنید");
+        selectOneOption.setDisplayName(resources.getString("select.one"));
 
         Shape toopShape = new Shape();
         toopShape.setId(1);
