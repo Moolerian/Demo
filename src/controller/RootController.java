@@ -11,8 +11,6 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.render.SurfaceImage;
-import gov.nasa.worldwind.util.ImageUtil;
-import gov.nasa.worldwind.util.WWMath;
 import gov.nasa.worldwindx.examples.RubberSheetImage;
 import gov.nasa.worldwindx.examples.util.ShapeUtils;
 import javafx.beans.value.ChangeListener;
@@ -22,6 +20,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
@@ -32,14 +31,14 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+// TODO use resource bundle
 public class RootController implements Initializable {
     private WorldWindowGLJPanel wwj;
     private Layer worldMapLayer;
+    private RubberSheetImage.SurfaceImageEntry surfaceImageEntry;
 
     @FXML
     private ComboBox<Shape> comboBox;
@@ -52,6 +51,7 @@ public class RootController implements Initializable {
         System.exit(0);
     }
 
+    //TODO create an input for elevating by user's input (lat,lon)
     @FXML
     private void elevateToIran() {
         View view = wwj.getView();
@@ -104,12 +104,8 @@ public class RootController implements Initializable {
             public void changed(ObservableValue<? extends Shape> observable, Shape oldValue, Shape newValue) {
                 if (newValue.getId() != null) {
                     File toopShapeFile = new File("src/resource/images/Toop.png");
-                    try {
-                        // TODO what would be happened with more than one file ?
-                        loadFile(toopShapeFile);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    // TODO what would be happened with more than one file ?
+                    Utils.addSurfaceImage(toopShapeFile, wwj);
                 }
             }
         });
@@ -118,38 +114,5 @@ public class RootController implements Initializable {
 
     }
 
-    //TODO clear this piece of code
-    private ArrayList<RubberSheetImage.SurfaceImageEntry> entryList = new ArrayList<>();
 
-    private void loadFile(File file) throws IOException {
-        BufferedImage image = ImageIO.read(file);
-        //TODO show an appropriate message
-        if (image == null)
-            return;
-        addNonGeoReferencedSurfaceImage(file, image, wwj);
-    }
-
-    private void addNonGeoReferencedSurfaceImage(File file,BufferedImage image,WorldWindow wwd) {
-        if (!SwingUtilities.isEventDispatchThread()) {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    addNonGeoReferencedSurfaceImage(file, image, wwd);
-                }
-            });
-        } else {
-            Position position = ShapeUtils.getNewShapePosition(wwd);
-            double lat = position.getLatitude().radians;
-            double lon = position.getLongitude().radians;
-            double sizeInMeters = ShapeUtils.getViewportScaleFactor(wwd);
-            double arcLength = sizeInMeters / wwd.getModel().getGlobe().getRadiusAt(position);
-            Sector sector = Sector.fromRadians(lat - arcLength, lat + arcLength, lon - arcLength, lon + arcLength);
-            addSurfaceImage(new SurfaceImage(image, sector), file.getName());
-        }
-    }
-
-    private void addSurfaceImage(SurfaceImage surfaceImage, String name) {
-        RubberSheetImage.SurfaceImageEntry entry = new RubberSheetImage.SurfaceImageEntry(wwj, surfaceImage, name);
-        entryList.add(entry);
-        entry.getEditor().setArmed(true);
-    }
 }
