@@ -10,6 +10,8 @@ import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.LayerList;
+import gov.nasa.worldwind.layers.MarkerLayer;
 import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwindx.examples.RubberSheetImage;
 import gov.nasa.worldwindx.examples.util.ShapeUtils;
@@ -46,7 +48,7 @@ public class RootController implements Initializable {
     private BorderPane borderPane;
 
     @FXML
-    private ResourceBundle resources ;
+    private ResourceBundle resources;
 
     // TODO could you show a confirm dialog before closing ?
     @FXML
@@ -69,6 +71,22 @@ public class RootController implements Initializable {
             wwj.getModel().getLayers().add(worldMapLayer);
         } else {
             wwj.getModel().getLayers().remove(worldMapLayer);
+        }
+    }
+
+    @FXML
+    private void editShapeToggle(ActionEvent e) {
+        CheckBox editShapeToggle = (CheckBox) e.getSource();
+        if (surfaceImageEntry != null) {
+            if (editShapeToggle.isSelected()) {
+                // TODO ask about if they want to resize i will be able to do it
+                surfaceImageEntry.getEditor().setArmed(true);
+                LayerList layers = wwj.getModel().getLayers();
+                Layer markerLayer = wwj.getModel().getLayers().getLayerByName("Marker Layer");
+                layers.remove(markerLayer);
+            } else {
+                surfaceImageEntry.getEditor().setArmed(false);
+            }
         }
     }
 
@@ -108,7 +126,7 @@ public class RootController implements Initializable {
                 if (newValue.getId() != null) {
                     File toopShapeFile = new File("src/resource/images/Toop.png");
                     // TODO what would be happened with more than one file ?
-                    Utils.addSurfaceImage(toopShapeFile, wwj);
+                    surfaceImageEntry = Utils.addSurfaceImage(toopShapeFile, wwj);
                 }
             }
         });

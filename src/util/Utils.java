@@ -36,27 +36,18 @@ public class Utils {
 
     }
 
-    public static void addSurfaceImage(File file, WorldWindowGLJPanel wwj) {
-        RubberSheetImage.SurfaceImageEntry surfaceImageEntry;
+    public static RubberSheetImage.SurfaceImageEntry addSurfaceImage(File file, WorldWindowGLJPanel wwj) {
+        RubberSheetImage.SurfaceImageEntry surfaceImageEntry = null;
         BufferedImage image;
         try {
             image = ImageIO.read(file);
-            if (!SwingUtilities.isEventDispatchThread()) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        addSurfaceImage(file, wwj);
-                    }
-                });
-            } else {
-                Position position = ShapeUtils.getNewShapePosition(wwj);
-                double lat = position.getLatitude().radians;
-                double lon = position.getLongitude().radians;
-                double sizeInMeters = ShapeUtils.getViewportScaleFactor(wwj);
-                double arcLength = sizeInMeters / wwj.getModel().getGlobe().getRadiusAt(position);
-                Sector sector = Sector.fromRadians(lat - arcLength, lat + arcLength, lon - arcLength, lon + arcLength);
-                surfaceImageEntry = new RubberSheetImage.SurfaceImageEntry(wwj, new SurfaceImage(image, sector), file.getName());
-                surfaceImageEntry.getEditor().setArmed(true);
-            }
+            Position position = ShapeUtils.getNewShapePosition(wwj);
+            double lat = position.getLatitude().radians;
+            double lon = position.getLongitude().radians;
+            double sizeInMeters = ShapeUtils.getViewportScaleFactor(wwj);
+            double arcLength = sizeInMeters / wwj.getModel().getGlobe().getRadiusAt(position);
+            Sector sector = Sector.fromRadians(lat - arcLength, lat + arcLength, lon - arcLength, lon + arcLength);
+            surfaceImageEntry = new RubberSheetImage.SurfaceImageEntry(wwj, new SurfaceImage(image, sector), file.getName());
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("اخطار");
@@ -64,5 +55,7 @@ public class Utils {
             alert.setContentText("Careful with the next step!");
             alert.showAndWait();
         }
+
+        return surfaceImageEntry;
     }
 }
