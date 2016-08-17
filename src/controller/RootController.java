@@ -3,18 +3,13 @@ package controller;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
-import gov.nasa.worldwind.layers.MarkerLayer;
-import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwindx.examples.RubberSheetImage;
-import gov.nasa.worldwindx.examples.util.ShapeUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -22,33 +17,31 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
 import model.Shape;
 import util.Utils;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-// TODO use resource bundle
 public class RootController implements Initializable {
     private WorldWindowGLJPanel wwj;
     private Layer worldMapLayer;
+    private Layer CompassLayer;
     private RubberSheetImage.SurfaceImageEntry surfaceImageEntry;
+
+    // properties
+    double iranLat = 35.746179170384686d;
+    double iranLon = 51.20007936255699d;
+    double iranElv = 51.20007936255699d;
 
     @FXML
     private ComboBox<Shape> comboBox;
     @FXML
     private BorderPane borderPane;
-
-    @FXML
-    private ResourceBundle resources;
 
     // TODO could you show a confirm dialog before closing ?
     @FXML
@@ -59,9 +52,8 @@ public class RootController implements Initializable {
     //TODO create an input for elevating by user's input (lat,lon)
     @FXML
     private void elevateToIran() {
-        View view = wwj.getView();
-        Position matterhorn = new Position(LatLon.fromDegrees(35.746179170384686d, 51.20007936255699d), 0d);
-        view.goTo(matterhorn, 3000000d);
+        Position iranPosition = new Position(LatLon.fromDegrees(iranLat, iranLon), 0d);
+        Utils.gotToPosition(wwj, iranPosition, iranElv);
     }
 
     @FXML
@@ -79,7 +71,7 @@ public class RootController implements Initializable {
         CheckBox editShapeToggle = (CheckBox) e.getSource();
         if (surfaceImageEntry != null) {
             if (editShapeToggle.isSelected()) {
-                // TODO ask about if they want to resize i will be able to do it
+                // TODO ask about if they want to resize, i will be able to do it
                 surfaceImageEntry.getEditor().setArmed(true);
                 LayerList layers = wwj.getModel().getLayers();
                 Layer markerLayer = wwj.getModel().getLayers().getLayerByName("Marker Layer");
@@ -87,6 +79,16 @@ public class RootController implements Initializable {
             } else {
                 surfaceImageEntry.getEditor().setArmed(false);
             }
+        }
+    }
+
+    @FXML
+    private void compassLayerToggle(ActionEvent e) {
+        CheckBox compassLayerToggle = (CheckBox) e.getSource();
+        if (compassLayerToggle.isSelected()) {
+            wwj.getModel().getLayers().add(CompassLayer);
+        } else {
+            wwj.getModel().getLayers().remove(CompassLayer);
         }
     }
 
@@ -100,6 +102,9 @@ public class RootController implements Initializable {
         // remove WorldMap in order to make it in toggle manner
         worldMapLayer = wwj.getModel().getLayers().getLayerByName("World Map");
         wwj.getModel().getLayers().remove(worldMapLayer);
+
+        CompassLayer = wwj.getModel().getLayers().getLayerByName("Compass");
+        wwj.getModel().getLayers().remove(CompassLayer);
 
 
         //TODO fetch all other shapes from database and add in foreach to #comboBox

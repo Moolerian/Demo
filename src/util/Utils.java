@@ -1,12 +1,12 @@
 package util;
 
-import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
+import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwindx.examples.RubberSheetImage;
-import gov.nasa.worldwindx.examples.util.ShapeUtils;
 import javafx.embed.swing.SwingNode;
 import javafx.scene.control.Alert;
 
@@ -36,15 +36,16 @@ public class Utils {
 
     }
 
+    //TODO get a position and size of image
     public static RubberSheetImage.SurfaceImageEntry addSurfaceImage(File file, WorldWindowGLJPanel wwj) {
         RubberSheetImage.SurfaceImageEntry surfaceImageEntry = null;
         BufferedImage image;
         try {
             image = ImageIO.read(file);
-            Position position = ShapeUtils.getNewShapePosition(wwj);
+            Position position =  new Position(LatLon.fromDegrees(35.746179170384686d, 51.20007936255699d), 0d);
             double lat = position.getLatitude().radians;
             double lon = position.getLongitude().radians;
-            double sizeInMeters = ShapeUtils.getViewportScaleFactor(wwj);
+            double sizeInMeters = 50000;
             double arcLength = sizeInMeters / wwj.getModel().getGlobe().getRadiusAt(position);
             Sector sector = Sector.fromRadians(lat - arcLength, lat + arcLength, lon - arcLength, lon + arcLength);
             surfaceImageEntry = new RubberSheetImage.SurfaceImageEntry(wwj, new SurfaceImage(image, sector), file.getName());
@@ -57,5 +58,10 @@ public class Utils {
         }
 
         return surfaceImageEntry;
+    }
+
+    public static void gotToPosition(WorldWindowGLJPanel wwj , Position position , double elevation){
+        View view = wwj.getView();
+        view.goTo(position, elevation);
     }
 }
