@@ -49,6 +49,7 @@ public class Utils {
             double arcLength = sizeInMeters / wwj.getModel().getGlobe().getRadiusAt(position);
             Sector sector = Sector.fromRadians(lat - arcLength, lat + arcLength, lon - arcLength, lon + arcLength);
             surfaceImageEntry = new RubberSheetImage.SurfaceImageEntry(wwj, new SurfaceImage(image, sector), file.getName());
+            wwj.getModel().getLayers();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("اخطار");

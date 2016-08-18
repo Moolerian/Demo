@@ -1,7 +1,7 @@
 package controller;
 
+
 import gov.nasa.worldwind.Model;
-import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
@@ -9,6 +9,8 @@ import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
+import gov.nasa.worldwind.layers.WorldMapLayer;
+import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import gov.nasa.worldwindx.examples.RubberSheetImage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,16 +18,30 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import model.Shape;
+import util.DBUtils;
+import util.UTF8Control;
 import util.Utils;
 
 import java.io.File;
 import java.net.URL;
+import java.sql.SQLException;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static util.Constants.*;
 
 public class RootController implements Initializable {
     private WorldWindowGLJPanel wwj;
@@ -33,20 +49,30 @@ public class RootController implements Initializable {
     private Layer CompassLayer;
     private RubberSheetImage.SurfaceImageEntry surfaceImageEntry;
 
-    // properties
-    double iranLat = 35.746179170384686d;
-    double iranLon = 51.20007936255699d;
-    double iranElv = 51.20007936255699d;
-
     @FXML
     private ComboBox<Shape> comboBox;
     @FXML
     private BorderPane borderPane;
+    @FXML
+    private ResourceBundle messages;
 
-    // TODO could you show a confirm dialog before closing ?
     @FXML
     private void closeHandler() {
-        System.exit(0);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(messages.getString("close.app.dialog.header"));
+        alert.setHeaderText(null);
+        alert.setContentText(messages.getString("are.you.sure.for.closing"));
+        ButtonType ok = new ButtonType(messages.getString("button.type.ok"));
+        ButtonType cancel = new ButtonType(messages.getString("button.type.cancel"));
+        alert.getButtonTypes().clear();
+        alert.getButtonTypes().add(cancel);
+        alert.getButtonTypes().add(ok);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ok) {
+            System.exit(0);
+        } else {
+            alert.close();
+        }
     }
 
     //TODO create an input for elevating by user's input (lat,lon)
@@ -57,10 +83,42 @@ public class RootController implements Initializable {
     }
 
     @FXML
-    private void activeClickAndGo(ActionEvent e) {
+    private void goToLatLon(){
+        try {
+            UTF8Control utf8Control = new UTF8Control();
+            ResourceBundle bundle = utf8Control.newBundle("resource/ApplicationResources",
+                    new Locale("fa"),null,
+                    ClassLoader.getSystemClassLoader(),true);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LatLonDialog.fxml"),bundle);
+            BorderPane page = loader.load();
+
+            // Create the dialog Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Edit Person");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.setResizable(false);
+            dialogStage.initOwner(MainDemo.getPrimaryStage());
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Set the person into the controller.
+            LatLonDialogController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+
+            // Show the dialog and wait until the user closes it
+            dialogStage.showAndWait();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void activeWorldMap(ActionEvent e) {
         CheckBox activeClickAndGo = (CheckBox) e.getSource();
         if (activeClickAndGo.isSelected()) {
             wwj.getModel().getLayers().add(worldMapLayer);
+            wwj.addSelectListener(new ClickAndGoSelectListener(wwj, WorldMapLayer.class));
         } else {
             wwj.getModel().getLayers().remove(worldMapLayer);
         }
@@ -71,7 +129,6 @@ public class RootController implements Initializable {
         CheckBox editShapeToggle = (CheckBox) e.getSource();
         if (surfaceImageEntry != null) {
             if (editShapeToggle.isSelected()) {
-                // TODO ask about if they want to resize, i will be able to do it
                 surfaceImageEntry.getEditor().setArmed(true);
                 LayerList layers = wwj.getModel().getLayers();
                 Layer markerLayer = wwj.getModel().getLayers().getLayerByName("Marker Layer");
@@ -99,27 +156,24 @@ public class RootController implements Initializable {
         Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
         wwj.setModel(m);
 
-        // remove WorldMap in order to make it in toggle manner
+        messages = resources;
+        // remove WorldMap and Compass layer in order to make it in toggle manner
         worldMapLayer = wwj.getModel().getLayers().getLayerByName("World Map");
         wwj.getModel().getLayers().remove(worldMapLayer);
-
         CompassLayer = wwj.getModel().getLayers().getLayerByName("Compass");
         wwj.getModel().getLayers().remove(CompassLayer);
 
-
-        //TODO fetch all other shapes from database and add in foreach to #comboBox
         ObservableList<Shape> shapes = FXCollections.observableArrayList();
 
         Shape selectOneOption = new Shape();
         selectOneOption.setId(null);
         selectOneOption.setDisplayName(resources.getString("select.one"));
-
-        Shape toopShape = new Shape();
-        toopShape.setId(1);
-        toopShape.setDisplayName("توپ");
-
         shapes.add(selectOneOption);
-        shapes.add(toopShape);
+        try {
+            shapes.addAll(DBUtils.getAllShapes());
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         comboBox.setItems(shapes);
         comboBox.setValue(selectOneOption);
@@ -128,10 +182,14 @@ public class RootController implements Initializable {
         comboBox.valueProperty().addListener(new ChangeListener<Shape>() {
             @Override
             public void changed(ObservableValue<? extends Shape> observable, Shape oldValue, Shape newValue) {
+                String oldShapeName = oldValue.getImage();
+                if (oldShapeName != null) {
+                    Layer oldShapeLayer = wwj.getModel().getLayers().getLayerByName(oldShapeName);
+                    wwj.getModel().getLayers().remove(oldShapeLayer);
+                }
                 if (newValue.getId() != null) {
-                    File toopShapeFile = new File("src/resource/images/Toop.png");
-                    // TODO what would be happened with more than one file ?
-                    surfaceImageEntry = Utils.addSurfaceImage(toopShapeFile, wwj);
+                    File imageFile = new File("src/resource/images/" + newValue.getImage());
+                    surfaceImageEntry = Utils.addSurfaceImage(imageFile, wwj);
                 }
             }
         });

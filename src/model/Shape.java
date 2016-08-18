@@ -13,6 +13,8 @@ public class Shape implements Serializable {
 
     private String displayName;
 
+    private String image ;
+
     public Integer getId() {
         return id;
     }
@@ -23,6 +25,14 @@ public class Shape implements Serializable {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public void setDisplayName(String displayName) {
@@ -47,6 +57,7 @@ public class Shape implements Serializable {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
+        result = 31 * result + (image != null ? image.hashCode() : 0);
         return result;
     }
 }
