@@ -25,8 +25,8 @@ public class MainDemo extends Application {
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         setPrimaryStage(primaryStage);
-        //primaryStage.setFullScreen(true);
-        //primaryStage.setFullScreenExitHint("");
+        primaryStage.setFullScreen(true);
+        primaryStage.setFullScreenExitHint("");
         primaryStage.show();
     }
 

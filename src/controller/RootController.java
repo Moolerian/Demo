@@ -21,10 +21,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -33,6 +32,7 @@ import util.DBUtils;
 import util.UTF8Control;
 import util.Utils;
 
+import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
@@ -46,6 +46,7 @@ public class RootController implements Initializable {
     private static WorldWindowGLJPanel wwj;
     private Layer worldMapLayer;
     private Layer compassLayer;
+    private Layer markerLayer;
     private Layer scaleLayer;
     private RubberSheetImage.SurfaceImageEntry surfaceImageEntry;
 
@@ -54,9 +55,19 @@ public class RootController implements Initializable {
     @FXML
     private CheckBox editShapeToggle;
     @FXML
+    private CheckBox editShapeArea;
+    @FXML
     private BorderPane borderPane;
     @FXML
     private ResourceBundle messages;
+    @FXML
+    private Button iranButton;
+    @FXML
+    private Button goToButton;
+    @FXML
+    private Button exit;
+    @FXML
+    private Button help;
 
     @FXML
     private void closeHandler() {
@@ -77,7 +88,6 @@ public class RootController implements Initializable {
         }
     }
 
-    //TODO create an input for elevating by user's input (lat,lon)
     @FXML
     private void elevateToIran() {
         Position iranPosition = new Position(LatLon.fromDegrees(iranLat, iranLon), 0d);
@@ -85,18 +95,17 @@ public class RootController implements Initializable {
     }
 
     @FXML
-    private void goToLatLon(){
+    private void goToLatLon() {
         try {
             UTF8Control utf8Control = new UTF8Control();
             ResourceBundle bundle = utf8Control.newBundle("resource/ApplicationResources",
-                    new Locale("fa"),null,
-                    ClassLoader.getSystemClassLoader(),true);
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LatLonDialog.fxml"),bundle);
+                    new Locale("fa"), null,
+                    ClassLoader.getSystemClassLoader(), true);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/latLonDialog.fxml"), bundle);
             BorderPane page = loader.load();
 
             // Create the dialog Stage.
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Edit Person");
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.setResizable(false);
             dialogStage.initOwner(MainDemo.getPrimaryStage());
@@ -106,6 +115,32 @@ public class RootController implements Initializable {
             // Set the person into the controller.
             LatLonDialogController controller = loader.getController();
             controller.setDialogStage(dialogStage);
+
+            // Show the dialog and wait until the user closes it
+            dialogStage.showAndWait();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void helpDialog(){
+        try {
+            UTF8Control utf8Control = new UTF8Control();
+            ResourceBundle bundle = utf8Control.newBundle("resource/ApplicationResources",
+                    new Locale("fa"), null,
+                    ClassLoader.getSystemClassLoader(), true);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/help.fxml"), bundle);
+            AnchorPane page = loader.load();
+
+            // Create the dialog Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setResizable(false);
+            dialogStage.initOwner(MainDemo.getPrimaryStage());
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
 
             // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
@@ -133,10 +168,25 @@ public class RootController implements Initializable {
             if (editShapeToggle.isSelected()) {
                 surfaceImageEntry.getEditor().setArmed(true);
                 LayerList layers = wwj.getModel().getLayers();
-                Layer markerLayer = wwj.getModel().getLayers().getLayerByName("Marker Layer");
+                markerLayer = wwj.getModel().getLayers().getLayerByName("Marker Layer");
                 layers.remove(markerLayer);
             } else {
                 surfaceImageEntry.getEditor().setArmed(false);
+            }
+        }
+    }
+
+    @FXML
+    private void editShapeArea(ActionEvent e){
+        CheckBox editShapeArea = (CheckBox) e.getSource();
+        if (surfaceImageEntry != null) {
+            if (editShapeArea.isSelected()) {
+                surfaceImageEntry.getEditor().setArmed(true);
+                LayerList layers = wwj.getModel().getLayers();
+                layers.add(markerLayer);
+            } else {
+                LayerList layers = wwj.getModel().getLayers();
+                layers.remove(markerLayer);
             }
         }
     }
@@ -161,12 +211,21 @@ public class RootController implements Initializable {
         }
     }
 
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    private void initializeComponent() {
         wwj = new WorldWindowGLJPanel();
         Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
         wwj.setModel(m);
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        iranButton.setTranslateY(screenSize.getHeight() / 2 - 10);
+        goToButton.setTranslateY(screenSize.getHeight() / 2 - 20);
+        exit.setTranslateY(screenSize.getHeight() / 2 - 20);
+        help.setTranslateY(screenSize.getHeight() / 2 - 20);
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        initializeComponent();
 
         messages = resources;
         // remove WorldMap and Compass layer in order to make it in toggle manner
@@ -193,6 +252,7 @@ public class RootController implements Initializable {
         comboBox.setValue(selectOneOption);
 
         editShapeToggle.setDisable(true);
+        editShapeArea.setDisable(true);
 
         // TODO replace with lambda expression
         comboBox.valueProperty().addListener(new ChangeListener<Shape>() {
@@ -205,10 +265,12 @@ public class RootController implements Initializable {
                 }
                 if (newValue.getId() != null) {
                     editShapeToggle.setDisable(false);
+                    editShapeArea.setDisable(false);
                     File imageFile = new File("src/resource/images/" + newValue.getImage());
                     surfaceImageEntry = Utils.addSurfaceImage(imageFile, wwj);
-                }else {
+                } else {
                     editShapeToggle.setDisable(true);
+                    editShapeArea.setDisable(true);
                 }
             }
         });

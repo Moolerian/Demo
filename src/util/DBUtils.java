@@ -33,6 +33,7 @@ public class DBUtils {
             shape.setId(id);
             shape.setDisplayName(displayName);
             shape.setImage(image);
+            shapes.add(shape);
 
         }
 
