@@ -1,9 +1,16 @@
 package controller;
 
 
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.Position;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import util.Utils;
+
+import static util.Constants.iranElv;
+import static util.Constants.iranLat;
+import static util.Constants.iranLon;
 
 /**
  *
@@ -27,6 +34,7 @@ public class LatLonDialogController {
      */
     @FXML
     private void initialize() {
+
     }
 
     /**
@@ -43,8 +51,17 @@ public class LatLonDialogController {
      */
     @FXML
     private void handleOk() {
-        //TODO got to entered lat lon alt so validate before going
+
+        double latitude = Double.parseDouble(userPrefLatitude.getText());
+        double longitude = Double.parseDouble(userPrefLongitude.getText());
+        double altitude = Double.parseDouble(userPrefAltitude.getText());
+        Position iranPosition = new Position(LatLon.fromDegrees(latitude, longitude), 0d);
+        dialogStage.close();
+        Utils.gotToPosition(RootController.getWwj(), iranPosition, altitude);
+
     }
+
+
 
     /**
      * Called when the user clicks cancel.

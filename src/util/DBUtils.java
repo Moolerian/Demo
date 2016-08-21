@@ -17,8 +17,6 @@ public class DBUtils {
 
     public static ObservableList<Shape> getAllShapes() throws SQLException, ClassNotFoundException {
         ObservableList<Shape> shapes = FXCollections.observableArrayList();
-        ;
-
         PreparedStatement preparedStatement;
 
         String selectSQL = " SELECT * FROM shape ";
@@ -35,11 +33,6 @@ public class DBUtils {
             shape.setId(id);
             shape.setDisplayName(displayName);
             shape.setImage(image);
-
-            shapes.add(shape);
-            System.out.println("id : " + id);
-            System.out.println("displayName  : " + displayName);
-            System.out.println("image : " + image);
 
         }
 

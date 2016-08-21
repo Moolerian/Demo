@@ -4,24 +4,30 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="202.0" maxWidth="300.0" minHeight="202.0" minWidth="300.0" prefHeight="202.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LatLonDialogController">
+<BorderPane maxHeight="202.0" maxWidth="300.0" minHeight="202.0" minWidth="300.0" prefHeight="202.0" prefWidth="300.0"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.LatLonDialogController">
     <right>
         <AnchorPane prefHeight="202.0" prefWidth="63.0" BorderPane.alignment="CENTER">
             <children>
-                <Label layoutX="12.0" layoutY="13.0" text="%latitude" />
-                <Label layoutX="11.0" layoutY="55.0" text="%longitude" />
-                <Label layoutX="13.0" layoutY="102.0" text="%altitude" />
+                <Label layoutX="12.0" layoutY="13.0" text="%latitude"/>
+                <Label layoutX="11.0" layoutY="55.0" text="%longitude"/>
+                <Label layoutX="13.0" layoutY="102.0" text="%altitude"/>
             </children>
         </AnchorPane>
     </right>
     <center>
         <AnchorPane prefHeight="202.0" prefWidth="266.0" BorderPane.alignment="CENTER">
             <children>
-                <TextField fx:id="userPrefLatitude" layoutX="28.0" layoutY="12.0" />
-                <TextField fx:id="userPrefLongitude" layoutX="28.0" layoutY="56.0" />
-                <TextField fx:id="userPrefAltitude" layoutX="27.0" layoutY="100.0" />
-                <Button layoutX="121.0" layoutY="149.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="90.0" text="%button.type.ok" />
-                <Button layoutX="24.0" layoutY="149.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="89.0" text="%button.type.cancel" />
+                <TextField fx:id="userPrefLatitude" layoutX="28.0" layoutY="12.0"/>
+                <TextField fx:id="userPrefLongitude" layoutX="28.0" layoutY="56.0"/>
+                <TextField fx:id="userPrefAltitude" layoutX="27.0" layoutY="100.0"/>
+                <Button layoutX="121.0" layoutY="149.0" onAction="#handleOk" mnemonicParsing="false" prefHeight="39.0"
+                        prefWidth="90.0"
+                        text="%button.type.ok"/>
+                <Button layoutX="24.0" layoutY="149.0" onAction="#handleCancel" mnemonicParsing="false"
+                        prefHeight="38.0" prefWidth="89.0"
+                        text="%button.type.cancel"/>
             </children>
         </AnchorPane>
     </center>

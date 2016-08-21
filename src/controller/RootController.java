@@ -25,7 +25,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -44,13 +43,16 @@ import java.util.ResourceBundle;
 import static util.Constants.*;
 
 public class RootController implements Initializable {
-    private WorldWindowGLJPanel wwj;
+    private static WorldWindowGLJPanel wwj;
     private Layer worldMapLayer;
-    private Layer CompassLayer;
+    private Layer compassLayer;
+    private Layer scaleLayer;
     private RubberSheetImage.SurfaceImageEntry surfaceImageEntry;
 
     @FXML
     private ComboBox<Shape> comboBox;
+    @FXML
+    private CheckBox editShapeToggle;
     @FXML
     private BorderPane borderPane;
     @FXML
@@ -95,7 +97,7 @@ public class RootController implements Initializable {
             // Create the dialog Stage.
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Edit Person");
-            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.setResizable(false);
             dialogStage.initOwner(MainDemo.getPrimaryStage());
             Scene scene = new Scene(page);
@@ -143,9 +145,19 @@ public class RootController implements Initializable {
     private void compassLayerToggle(ActionEvent e) {
         CheckBox compassLayerToggle = (CheckBox) e.getSource();
         if (compassLayerToggle.isSelected()) {
-            wwj.getModel().getLayers().add(CompassLayer);
+            wwj.getModel().getLayers().add(compassLayer);
         } else {
-            wwj.getModel().getLayers().remove(CompassLayer);
+            wwj.getModel().getLayers().remove(compassLayer);
+        }
+    }
+
+    @FXML
+    private void ScaleLayerToggle(ActionEvent e) {
+        CheckBox scaleLayerToggle = (CheckBox) e.getSource();
+        if (scaleLayerToggle.isSelected()) {
+            wwj.getModel().getLayers().add(scaleLayer);
+        } else {
+            wwj.getModel().getLayers().remove(scaleLayer);
         }
     }
 
@@ -160,8 +172,10 @@ public class RootController implements Initializable {
         // remove WorldMap and Compass layer in order to make it in toggle manner
         worldMapLayer = wwj.getModel().getLayers().getLayerByName("World Map");
         wwj.getModel().getLayers().remove(worldMapLayer);
-        CompassLayer = wwj.getModel().getLayers().getLayerByName("Compass");
-        wwj.getModel().getLayers().remove(CompassLayer);
+        compassLayer = wwj.getModel().getLayers().getLayerByName("Compass");
+        wwj.getModel().getLayers().remove(compassLayer);
+        scaleLayer = wwj.getModel().getLayers().getLayerByName("Scale bar");
+        wwj.getModel().getLayers().remove(scaleLayer);
 
         ObservableList<Shape> shapes = FXCollections.observableArrayList();
 
@@ -178,6 +192,8 @@ public class RootController implements Initializable {
         comboBox.setItems(shapes);
         comboBox.setValue(selectOneOption);
 
+        editShapeToggle.setDisable(true);
+
         // TODO replace with lambda expression
         comboBox.valueProperty().addListener(new ChangeListener<Shape>() {
             @Override
@@ -188,8 +204,11 @@ public class RootController implements Initializable {
                     wwj.getModel().getLayers().remove(oldShapeLayer);
                 }
                 if (newValue.getId() != null) {
+                    editShapeToggle.setDisable(false);
                     File imageFile = new File("src/resource/images/" + newValue.getImage());
                     surfaceImageEntry = Utils.addSurfaceImage(imageFile, wwj);
+                }else {
+                    editShapeToggle.setDisable(true);
                 }
             }
         });
@@ -199,4 +218,11 @@ public class RootController implements Initializable {
     }
 
 
+    public static WorldWindowGLJPanel getWwj() {
+        return wwj;
+    }
+
+    public static void setWwj(WorldWindowGLJPanel wwj) {
+        RootController.wwj = wwj;
+    }
 }

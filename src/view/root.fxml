@@ -40,12 +40,14 @@
                                 AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="327.0"/>
                         <CheckBox layoutX="13.0" layoutY="48.0" mnemonicParsing="false" onAction="#activeWorldMap"
                                   text="%world.map.view" textAlignment="RIGHT"/>
-                        <CheckBox layoutX="14.0" layoutY="77.0" mnemonicParsing="false" onAction="#editShapeToggle"
-                                  text="%edit.shape.toggle"/>
+                        <CheckBox fx:id="editShapeToggle" layoutX="14.0" layoutY="77.0" mnemonicParsing="false"
+                                  onAction="#editShapeToggle" text="%edit.shape.toggle"/>
                         <CheckBox layoutX="14.0" layoutY="108.0" mnemonicParsing="false" onAction="#compassLayerToggle"
                                   text="%compas.layer.toggle"/>
                         <Button layoutX="28.0" layoutY="227.0" mnemonicParsing="false" onAction="#goToLatLon"
                                 text="%go.to.lan.lot"/>
+                        <CheckBox layoutX="14.0" layoutY="139.0" mnemonicParsing="false" onAction="#ScaleLayerToggle"
+                                  text="%show.scale"/>
                     </children>
                 </AnchorPane>
             </content>
