@@ -20,9 +20,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
@@ -68,6 +70,8 @@ public class RootController implements Initializable {
     private Button exit;
     @FXML
     private Button help;
+    @FXML
+    private Button shapeArea;
 
     @FXML
     private void closeHandler() {
@@ -211,6 +215,39 @@ public class RootController implements Initializable {
         }
     }
 
+    @FXML
+    private void shapeAreaAction(){
+        try {
+            UTF8Control utf8Control = new UTF8Control();
+            ResourceBundle bundle = utf8Control.newBundle("resource/ApplicationResources",
+                    new Locale("fa"), null, ClassLoader.getSystemClassLoader(), true);
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/positionDialog.fxml"), bundle);
+            AnchorPane page = loader.load();
+
+            Position referencePosition = surfaceImageEntry.getSurfaceImage().getReferencePosition();
+            TextField latitudeField = (TextField) page.lookup("#latitudeField");
+            latitudeField.setText(String.valueOf(referencePosition.getLatitude()));
+            TextField longitudeField = (TextField) page.lookup("#longitudeField");
+            longitudeField.setText(String.valueOf(referencePosition.getLongitude()));
+
+            // Create the dialog Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setResizable(false);dialogStage.setIconified(false);
+            dialogStage.initOwner(MainDemo.getPrimaryStage());
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+
+            // Show the dialog and wait until the user closes it
+            dialogStage.showAndWait();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void initializeComponent() {
         wwj = new WorldWindowGLJPanel();
         Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
@@ -221,6 +258,8 @@ public class RootController implements Initializable {
         goToButton.setTranslateY(screenSize.getHeight() / 2 - 20);
         exit.setTranslateY(screenSize.getHeight() / 2 - 20);
         help.setTranslateY(screenSize.getHeight() / 2 - 20);
+        shapeArea.setTranslateY(screenSize.getHeight() / 2 - 50);
+        shapeArea.setDisable(true);
     }
 
     @Override
@@ -266,11 +305,13 @@ public class RootController implements Initializable {
                 if (newValue.getId() != null) {
                     editShapeToggle.setDisable(false);
                     editShapeArea.setDisable(false);
+                    shapeArea.setDisable(false);
                     File imageFile = new File("src/resource/images/" + newValue.getImage());
                     surfaceImageEntry = Utils.addSurfaceImage(imageFile, wwj);
                 } else {
                     editShapeToggle.setDisable(true);
                     editShapeArea.setDisable(true);
+                    shapeArea.setDisable(true);
                 }
             }
         });

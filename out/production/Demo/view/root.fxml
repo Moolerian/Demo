@@ -1,46 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.*?>
 
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="400.0" prefWidth="615.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controller.RootController">
-    <top>
-        <MenuBar BorderPane.alignment="CENTER">
-            <menus>
-                <Menu mnemonicParsing="false" text="File">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#closeHandler" text="Close"/>
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="Delete"/>
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="About"/>
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
-    </top>
+            prefHeight="400.0" prefWidth="615.0" scaleShape="false" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootController">
     <left>
-        <ScrollPane prefHeight="375.0" prefWidth="139.0" BorderPane.alignment="CENTER">
+        <ScrollPane prefHeight="400.0" prefWidth="186.0" BorderPane.alignment="CENTER">
             <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="366.0" prefWidth="132.0">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="399.0" prefWidth="170.0">
                     <children>
-                        <ComboBox fx:id="comboBox" layoutX="14.0" layoutY="5.0" prefHeight="25.0" prefWidth="103.0"/>
-                        <Button layoutX="14.0" layoutY="327.0" mnemonicParsing="false" onAction="#elevateToIran"
-                                prefHeight="25.0" prefWidth="101.0" text="ایران"/>
-                        <CheckBox layoutX="28.0" layoutY="48.0" mnemonicParsing="false"
-                                  text="مدیریت نمای کلی"
-                                  textAlignment="RIGHT" onAction="#activeClickAndGo"/>
+                        <ComboBox fx:id="comboBox" layoutX="12.0" layoutY="5.0" prefHeight="25.0" prefWidth="147.0"/>
+                        <Button id="Button" fx:id="iranButton" layoutX="15.0" mnemonicParsing="false"
+                                onAction="#elevateToIran" prefHeight="25.0" prefWidth="101.0" snapToPixel="false"
+                                stylesheets="@../resource/b.css" text="%iran" AnchorPane.bottomAnchor="13.0"
+                                AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="16.0"/>
+                        <CheckBox layoutX="13.0" layoutY="48.0" mnemonicParsing="false" onAction="#activeWorldMap"
+                                  text="%world.map.view" textAlignment="RIGHT"/>
+                        <CheckBox fx:id="editShapeToggle" layoutX="14.0" layoutY="77.0" mnemonicParsing="false"
+                                  onAction="#editShapeToggle" text="%edit.shape.toggle"/>
+                        <CheckBox layoutX="14.0" layoutY="108.0" mnemonicParsing="false" onAction="#compassLayerToggle"
+                                  text="%compas.layer.toggle"/>
+                        <Button fx:id="goToButton" layoutX="85.0" layoutY="322.0" mnemonicParsing="false"
+                                onAction="#goToLatLon" prefHeight="25.0" prefWidth="70.0" text="%go.to.lan.lot"/>
+                        <CheckBox layoutX="14.0" layoutY="139.0" mnemonicParsing="false" onAction="#ScaleLayerToggle"
+                                  text="%show.scale"/>
+                        <Button fx:id="exit" layoutX="15.0" layoutY="321.0" mnemonicParsing="false"
+                                onAction="#closeHandler" prefHeight="25.0" prefWidth="63.0" text="%close"/>
+                        <Button fx:id="help" layoutX="86.0" layoutY="289.0" mnemonicParsing="false"
+                                onAction="#helpDialog" prefHeight="25.0" prefWidth="70.0" text="%help"/>
+                        <CheckBox fx:id="editShapeArea" layoutX="14.0" layoutY="174.0" mnemonicParsing="false"
+                                  onAction="#editShapeArea" text="%edit.shape.area"/>
+                        <Button fx:id="shapeArea" layoutX="34.0" layoutY="256.0" mnemonicParsing="false"
+                                onAction="#shapeAreaAction" text="%shape.area.button"/>
                     </children>
                 </AnchorPane>
             </content>

@@ -18,9 +18,9 @@ public class MainDemo extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-        Configuration.setValue(
-                "gov.nasa.worldwind.avkey.DataFileStoreConfigurationFileName",
-                "resource/CacheLocationConfiguration.xml");
+//        Configuration.setValue(
+//                "gov.nasa.worldwind.avkey.DataFileStoreConfigurationFileName",
+//                "resource/CacheLocationConfiguration.xml");
 
         UTF8Control utf8Control = new UTF8Control();
         ResourceBundle bundle = utf8Control.newBundle("resource/ApplicationResources",new Locale("fa"),null,
