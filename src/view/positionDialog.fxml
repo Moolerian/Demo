@@ -4,7 +4,8 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="108.0"
+<AnchorPane styleClass="root" stylesheets="@../resource/style.css" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="108.0"
             prefWidth="451.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <GridPane layoutX="14.0" layoutY="8.0" prefHeight="318.0" prefWidth="472.0" AnchorPane.bottomAnchor="0.0"
