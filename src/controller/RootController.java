@@ -20,7 +20,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -73,6 +72,7 @@ public class RootController implements Initializable {
     @FXML
     private Button shapeArea;
 
+    // TODO Move to icon Bar
     @FXML
     private void closeHandler() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -92,12 +92,14 @@ public class RootController implements Initializable {
         }
     }
 
+    // TODO Move to icon Bar
     @FXML
     private void elevateToIran() {
         Position iranPosition = new Position(LatLon.fromDegrees(iranLat, iranLon), 0d);
         Utils.gotToPosition(wwj, iranPosition, iranElv);
     }
 
+    // TODO Move to icon Bar
     @FXML
     private void goToLatLon() {
         try {
@@ -128,6 +130,7 @@ public class RootController implements Initializable {
         }
     }
 
+    // TODO Move to icon Bar
     @FXML
     private void helpDialog(){
         try {
@@ -154,6 +157,7 @@ public class RootController implements Initializable {
         }
     }
 
+    // TODO Move to icon Bar
     @FXML
     private void activeWorldMap(ActionEvent e) {
         CheckBox activeClickAndGo = (CheckBox) e.getSource();
@@ -165,6 +169,7 @@ public class RootController implements Initializable {
         }
     }
 
+    // TODO remove this part
     @FXML
     private void editShapeToggle(ActionEvent e) {
         CheckBox editShapeToggle = (CheckBox) e.getSource();
@@ -180,6 +185,7 @@ public class RootController implements Initializable {
         }
     }
 
+    // TODO remove this part
     @FXML
     private void editShapeArea(ActionEvent e){
         CheckBox editShapeArea = (CheckBox) e.getSource();
@@ -195,6 +201,7 @@ public class RootController implements Initializable {
         }
     }
 
+    // TODO Move to icon Bar
     @FXML
     private void compassLayerToggle(ActionEvent e) {
         CheckBox compassLayerToggle = (CheckBox) e.getSource();
@@ -205,6 +212,7 @@ public class RootController implements Initializable {
         }
     }
 
+    // TODO Move to icon Bar
     @FXML
     private void ScaleLayerToggle(ActionEvent e) {
         CheckBox scaleLayerToggle = (CheckBox) e.getSource();
@@ -215,6 +223,7 @@ public class RootController implements Initializable {
         }
     }
 
+    // TODO Move to icon Bar
     @FXML
     private void shapeAreaAction(){
         try {
@@ -253,6 +262,7 @@ public class RootController implements Initializable {
         Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
         wwj.setModel(m);
 
+        // TODO Remove this part
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         iranButton.setTranslateY(screenSize.getHeight() / 2 - 10);
         goToButton.setTranslateY(screenSize.getHeight() / 2 - 20);
@@ -268,6 +278,7 @@ public class RootController implements Initializable {
 
         messages = resources;
         // remove WorldMap and Compass layer in order to make it in toggle manner
+        // TODO move it to a separate method
         worldMapLayer = wwj.getModel().getLayers().getLayerByName("World Map");
         wwj.getModel().getLayers().remove(worldMapLayer);
         compassLayer = wwj.getModel().getLayers().getLayerByName("Compass");
@@ -275,6 +286,7 @@ public class RootController implements Initializable {
         scaleLayer = wwj.getModel().getLayers().getLayerByName("Scale bar");
         wwj.getModel().getLayers().remove(scaleLayer);
 
+        // TODO Remove this part and use a simple colored circle
         ObservableList<Shape> shapes = FXCollections.observableArrayList();
 
         Shape selectOneOption = new Shape();

@@ -25,6 +25,7 @@ public class MainDemo extends Application {
         UTF8Control utf8Control = new UTF8Control();
         ResourceBundle bundle = utf8Control.newBundle("resource/ApplicationResources",new Locale("fa"),null,
                 ClassLoader.getSystemClassLoader(),true);
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/root.fxml"),bundle);
         Parent root = loader.load();
         Scene scene = new Scene(root);
