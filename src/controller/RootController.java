@@ -52,8 +52,6 @@ public class RootController implements Initializable {
     private RubberSheetImage.SurfaceImageEntry surfaceImageEntry;
 
     @FXML
-    private ComboBox<Shape> comboBox;
-    @FXML
     private CheckBox editShapeToggle;
     @FXML
     private CheckBox editShapeArea;
@@ -62,17 +60,10 @@ public class RootController implements Initializable {
     @FXML
     private ResourceBundle messages;
     @FXML
-    private Button iranButton;
-    @FXML
     private Button goToButton;
-    @FXML
-    private Button exit;
-    @FXML
-    private Button help;
     @FXML
     private Button shapeArea;
 
-    // TODO Move to icon Bar
     @FXML
     private void closeHandler() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -92,7 +83,6 @@ public class RootController implements Initializable {
         }
     }
 
-    // TODO Move to icon Bar
     @FXML
     private void elevateToIran() {
         Position iranPosition = new Position(LatLon.fromDegrees(iranLat, iranLon), 0d);
@@ -130,7 +120,6 @@ public class RootController implements Initializable {
         }
     }
 
-    // TODO Move to icon Bar
     @FXML
     private void helpDialog(){
         try {
@@ -264,10 +253,10 @@ public class RootController implements Initializable {
 
         // TODO Remove this part
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        iranButton.setTranslateY(screenSize.getHeight() / 2 - 10);
+
         goToButton.setTranslateY(screenSize.getHeight() / 2 - 20);
-        exit.setTranslateY(screenSize.getHeight() / 2 - 20);
-        help.setTranslateY(screenSize.getHeight() / 2 - 20);
+
+
         shapeArea.setTranslateY(screenSize.getHeight() / 2 - 50);
         shapeArea.setDisable(true);
     }
@@ -299,34 +288,33 @@ public class RootController implements Initializable {
             e.printStackTrace();
         }
 
-        comboBox.setItems(shapes);
-        comboBox.setValue(selectOneOption);
+
 
         editShapeToggle.setDisable(true);
         editShapeArea.setDisable(true);
 
         // TODO replace with lambda expression
-        comboBox.valueProperty().addListener(new ChangeListener<Shape>() {
-            @Override
-            public void changed(ObservableValue<? extends Shape> observable, Shape oldValue, Shape newValue) {
-                String oldShapeName = oldValue.getImage();
-                if (oldShapeName != null) {
-                    Layer oldShapeLayer = wwj.getModel().getLayers().getLayerByName(oldShapeName);
-                    wwj.getModel().getLayers().remove(oldShapeLayer);
-                }
-                if (newValue.getId() != null) {
-                    editShapeToggle.setDisable(false);
-                    editShapeArea.setDisable(false);
-                    shapeArea.setDisable(false);
-                    File imageFile = new File("src/resource/images/" + newValue.getImage());
-                    surfaceImageEntry = Utils.addSurfaceImage(imageFile, wwj);
-                } else {
-                    editShapeToggle.setDisable(true);
-                    editShapeArea.setDisable(true);
-                    shapeArea.setDisable(true);
-                }
-            }
-        });
+//        comboBox.valueProperty().addListener(new ChangeListener<Shape>() {
+//            @Override
+//            public void changed(ObservableValue<? extends Shape> observable, Shape oldValue, Shape newValue) {
+//                String oldShapeName = oldValue.getImage();
+//                if (oldShapeName != null) {
+//                    Layer oldShapeLayer = wwj.getModel().getLayers().getLayerByName(oldShapeName);
+//                    wwj.getModel().getLayers().remove(oldShapeLayer);
+//                }
+//                if (newValue.getId() != null) {
+//                    editShapeToggle.setDisable(false);
+//                    editShapeArea.setDisable(false);
+//                    shapeArea.setDisable(false);
+//                    File imageFile = new File("src/resource/images/" + newValue.getImage());
+//                    surfaceImageEntry = Utils.addSurfaceImage(imageFile, wwj);
+//                } else {
+//                    editShapeToggle.setDisable(true);
+//                    editShapeArea.setDisable(true);
+//                    shapeArea.setDisable(true);
+//                }
+//            }
+//        });
 
         borderPane.setRight(Utils.buildWW(wwj));
 

@@ -3,3 +3,15 @@
     -fx-background: rgb(50, 50, 50);
     -fx-control-inner-background:  rgb(50, 50, 50);
 }
+
+#iran-button{
+   -fx-background-image:url("/resource/images/iran.png") ;
+    -fx-background-size: 40, 40;
+    -fx-background-repeat: no-repeat;
+}
+
+#go-button{
+    -fx-background-image:url("/resource/images/map.png") ;
+    -fx-background-size: 35, 35;
+    -fx-background-repeat: no-repeat;
+}
