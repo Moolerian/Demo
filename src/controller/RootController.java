@@ -8,38 +8,34 @@ import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.layers.LayerList;
 import gov.nasa.worldwind.layers.WorldMapLayer;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import gov.nasa.worldwindx.examples.RubberSheetImage;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.Shape;
 import util.DBUtils;
 import util.UTF8Control;
 import util.Utils;
 
-import java.awt.*;
-import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static util.Constants.*;
 
@@ -47,22 +43,15 @@ public class RootController implements Initializable {
     private static WorldWindowGLJPanel wwj;
     private Layer worldMapLayer;
     private Layer compassLayer;
-    private Layer markerLayer;
     private Layer scaleLayer;
     private RubberSheetImage.SurfaceImageEntry surfaceImageEntry;
 
-    @FXML
-    private CheckBox editShapeToggle;
-    @FXML
-    private CheckBox editShapeArea;
     @FXML
     private BorderPane borderPane;
     @FXML
     private ResourceBundle messages;
     @FXML
-    private Button goToButton;
-    @FXML
-    private Button shapeArea;
+    private Label utcClock;
 
     @FXML
     private void closeHandler() {
@@ -89,7 +78,6 @@ public class RootController implements Initializable {
         Utils.gotToPosition(wwj, iranPosition, iranElv);
     }
 
-    // TODO Move to icon Bar
     @FXML
     private void goToLatLon() {
         try {
@@ -121,7 +109,27 @@ public class RootController implements Initializable {
     }
 
     @FXML
-    private void helpDialog(){
+    private void compassLayerToggle(ActionEvent e) {
+        CheckMenuItem compassLayerToggle = (CheckMenuItem) e.getSource();
+        if (compassLayerToggle.isSelected()) {
+            wwj.getModel().getLayers().add(compassLayer);
+        } else {
+            wwj.getModel().getLayers().remove(compassLayer);
+        }
+    }
+
+    @FXML
+    private void ScaleLayerToggle(ActionEvent e) {
+        CheckMenuItem scaleLayerToggle = (CheckMenuItem) e.getSource();
+        if (scaleLayerToggle.isSelected()) {
+            wwj.getModel().getLayers().add(scaleLayer);
+        } else {
+            wwj.getModel().getLayers().remove(scaleLayer);
+        }
+    }
+
+    @FXML
+    private void helpDialog() {
         try {
             UTF8Control utf8Control = new UTF8Control();
             ResourceBundle bundle = utf8Control.newBundle("resource/ApplicationResources",
@@ -146,10 +154,9 @@ public class RootController implements Initializable {
         }
     }
 
-    // TODO Move to icon Bar
     @FXML
     private void activeWorldMap(ActionEvent e) {
-        CheckBox activeClickAndGo = (CheckBox) e.getSource();
+        CheckMenuItem activeClickAndGo = (CheckMenuItem) e.getSource();
         if (activeClickAndGo.isSelected()) {
             wwj.getModel().getLayers().add(worldMapLayer);
             wwj.addSelectListener(new ClickAndGoSelectListener(wwj, WorldMapLayer.class));
@@ -158,63 +165,42 @@ public class RootController implements Initializable {
         }
     }
 
-    // TODO remove this part
-    @FXML
-    private void editShapeToggle(ActionEvent e) {
-        CheckBox editShapeToggle = (CheckBox) e.getSource();
-        if (surfaceImageEntry != null) {
-            if (editShapeToggle.isSelected()) {
-                surfaceImageEntry.getEditor().setArmed(true);
-                LayerList layers = wwj.getModel().getLayers();
-                markerLayer = wwj.getModel().getLayers().getLayerByName("Marker Layer");
-                layers.remove(markerLayer);
-            } else {
-                surfaceImageEntry.getEditor().setArmed(false);
-            }
-        }
-    }
+//    // TODO remove this part
+//    @FXML
+//    private void editShapeToggle(ActionEvent e) {
+//        CheckBox editShapeToggle = (CheckBox) e.getSource();
+//        if (surfaceImageEntry != null) {
+//            if (editShapeToggle.isSelected()) {
+//                surfaceImageEntry.getEditor().setArmed(true);
+//                LayerList layers = wwj.getModel().getLayers();
+//                markerLayer = wwj.getModel().getLayers().getLayerByName("Marker Layer");
+//                layers.remove(markerLayer);
+//            } else {
+//                surfaceImageEntry.getEditor().setArmed(false);
+//            }
+//        }
+//    }
 
-    // TODO remove this part
-    @FXML
-    private void editShapeArea(ActionEvent e){
-        CheckBox editShapeArea = (CheckBox) e.getSource();
-        if (surfaceImageEntry != null) {
-            if (editShapeArea.isSelected()) {
-                surfaceImageEntry.getEditor().setArmed(true);
-                LayerList layers = wwj.getModel().getLayers();
-                layers.add(markerLayer);
-            } else {
-                LayerList layers = wwj.getModel().getLayers();
-                layers.remove(markerLayer);
-            }
-        }
-    }
+//    // TODO remove this part
+//    @FXML
+//    private void editShapeArea(ActionEvent e){
+//        CheckBox editShapeArea = (CheckBox) e.getSource();
+//        if (surfaceImageEntry != null) {
+//            if (editShapeArea.isSelected()) {
+//                surfaceImageEntry.getEditor().setArmed(true);
+//                LayerList layers = wwj.getModel().getLayers();
+//                layers.add(markerLayer);
+//            } else {
+//                LayerList layers = wwj.getModel().getLayers();
+//                layers.remove(markerLayer);
+//            }
+//        }
+//    }
 
-    // TODO Move to icon Bar
-    @FXML
-    private void compassLayerToggle(ActionEvent e) {
-        CheckBox compassLayerToggle = (CheckBox) e.getSource();
-        if (compassLayerToggle.isSelected()) {
-            wwj.getModel().getLayers().add(compassLayer);
-        } else {
-            wwj.getModel().getLayers().remove(compassLayer);
-        }
-    }
 
     // TODO Move to icon Bar
     @FXML
-    private void ScaleLayerToggle(ActionEvent e) {
-        CheckBox scaleLayerToggle = (CheckBox) e.getSource();
-        if (scaleLayerToggle.isSelected()) {
-            wwj.getModel().getLayers().add(scaleLayer);
-        } else {
-            wwj.getModel().getLayers().remove(scaleLayer);
-        }
-    }
-
-    // TODO Move to icon Bar
-    @FXML
-    private void shapeAreaAction(){
+    private void shapeAreaAction() {
         try {
             UTF8Control utf8Control = new UTF8Control();
             ResourceBundle bundle = utf8Control.newBundle("resource/ApplicationResources",
@@ -232,7 +218,8 @@ public class RootController implements Initializable {
             // Create the dialog Stage.
             Stage dialogStage = new Stage();
             dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.setResizable(false);dialogStage.setIconified(false);
+            dialogStage.setResizable(false);
+            dialogStage.setIconified(false);
             dialogStage.initOwner(MainDemo.getPrimaryStage());
             Scene scene = new Scene(page);
             dialogStage.setScene(scene);
@@ -246,19 +233,33 @@ public class RootController implements Initializable {
         }
     }
 
+    private void UtcTime() {
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(0),
+                        new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent actionEvent) {
+                                Calendar time = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                                String hourString = Utils.pad(2, ' ', time.get(Calendar.HOUR) == 0 ? "12" : time.get(Calendar.HOUR) + "");
+                                String minuteString = Utils.pad(2, '0', time.get(Calendar.MINUTE) + "");
+                                String secondString = Utils.pad(2, '0', time.get(Calendar.SECOND) + "");
+                                String ampmString = time.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM";
+                                utcClock.setText(hourString + ":" + minuteString + ":" + secondString + " " + ampmString);
+                            }
+                        }
+                ),
+                new KeyFrame(Duration.seconds(1))
+        );
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+    }
+
     private void initializeComponent() {
+
         wwj = new WorldWindowGLJPanel();
         Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
         wwj.setModel(m);
-
-        // TODO Remove this part
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-        goToButton.setTranslateY(screenSize.getHeight() / 2 - 20);
-
-
-        shapeArea.setTranslateY(screenSize.getHeight() / 2 - 50);
-        shapeArea.setDisable(true);
+        UtcTime();
     }
 
     @Override
@@ -287,11 +288,6 @@ public class RootController implements Initializable {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
-
-
-        editShapeToggle.setDisable(true);
-        editShapeArea.setDisable(true);
 
         // TODO replace with lambda expression
 //        comboBox.valueProperty().addListener(new ChangeListener<Shape>() {

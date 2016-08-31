@@ -5,73 +5,58 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="400.0" prefWidth="615.0" scaleShape="false" styleClass="root"
-            stylesheets="@../resource/style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controller.RootController">
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="615.0" scaleShape="false" styleClass="root" stylesheets="@../resource/style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RootController">
     <top>
         <Pane prefHeight="86.0" prefWidth="615.0" BorderPane.alignment="CENTER">
             <children>
-                <MenuBar maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity"
-                         prefHeight="29.0" prefWidth="615.0">
+                <MenuBar maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="29.0" prefWidth="615.0">
                     <menus>
                         <Menu mnemonicParsing="false" text="File">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#closeHandler" text="Close"/>
+                                <MenuItem mnemonicParsing="false" onAction="#closeHandler" text="Close" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="Util">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#goToLatLon" text="Go"/>
-                                <MenuItem mnemonicParsing="false" onAction="#elevateToIran" text="Iran"/>
+                                <MenuItem mnemonicParsing="false" onAction="#goToLatLon" text="Go" />
+                                <MenuItem mnemonicParsing="false" onAction="#elevateToIran" text="Iran" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="Edit">
                             <items>
-                                <MenuItem mnemonicParsing="false" text="Delete"/>
+                                <MenuItem mnemonicParsing="false" text="Delete" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="View">
                             <items>
-                                <MenuItem mnemonicParsing="false" text="Close"/>
+                                <CheckMenuItem mnemonicParsing="false" onAction="#activeWorldMap" text="%world.map.view" />
+                                <CheckMenuItem mnemonicParsing="false" onAction="#ScaleLayerToggle" text="%show.scale" />
+                                <CheckMenuItem mnemonicParsing="false" onAction="#compassLayerToggle" text="%compas.layer.toggle" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="Help">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#helpDialog" text="Help"/>
+                                <MenuItem mnemonicParsing="false" onAction="#helpDialog" text="Help" />
                             </items>
                         </Menu>
                     </menus>
                 </MenuBar>
-                <Button id="iran-button" layoutX="8.0" layoutY="43.0" mnemonicParsing="false" onAction="#elevateToIran"
-                        pickOnBounds="false" prefHeight="29.0" prefWidth="36.0" stylesheets="@../resource/style.css"/>
-                <Button id="go-button" layoutX="55.0" layoutY="43.0" mnemonicParsing="false" onAction="#goToLatLon"
-                        pickOnBounds="false" prefHeight="29.0" prefWidth="36.0" stylesheets="@../resource/style.css"/>
+                <Button id="iran-button" layoutX="8.0" layoutY="43.0" mnemonicParsing="false" onAction="#elevateToIran" pickOnBounds="false" prefHeight="29.0" prefWidth="36.0" stylesheets="@../resource/style.css" />
+                <Button id="go-button" layoutX="55.0" layoutY="43.0" mnemonicParsing="false" onAction="#goToLatLon" pickOnBounds="false" prefHeight="29.0" prefWidth="36.0" stylesheets="@../resource/style.css" />
             </children>
         </Pane>
     </top>
     <left>
-        <ScrollPane prefHeight="400.0" prefWidth="186.0" BorderPane.alignment="CENTER">
+        <ScrollPane pickOnBounds="false" prefHeight="400.0" prefWidth="186.0" style="-: 0;" BorderPane.alignment="CENTER">
             <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="399.0" prefWidth="170.0">
-                    <children>
-                        <CheckBox layoutX="13.0" layoutY="48.0" mnemonicParsing="false" onAction="#activeWorldMap"
-                                  text="%world.map.view" textAlignment="RIGHT"/>
-                        <CheckBox fx:id="editShapeToggle" layoutX="14.0" layoutY="77.0" mnemonicParsing="false"
-                                  onAction="#editShapeToggle" text="%edit.shape.toggle"/>
-                        <CheckBox layoutX="14.0" layoutY="108.0" mnemonicParsing="false" onAction="#compassLayerToggle"
-                                  text="%compas.layer.toggle"/>
-                        <Button fx:id="goToButton" layoutX="85.0" layoutY="322.0" mnemonicParsing="false"
-                                onAction="#goToLatLon" prefHeight="25.0" prefWidth="70.0" text="%go.to.lan.lot"/>
-                        <CheckBox layoutX="14.0" layoutY="139.0" mnemonicParsing="false" onAction="#ScaleLayerToggle"
-                                  text="%show.scale"/>
-                        <CheckBox fx:id="editShapeArea" layoutX="14.0" layoutY="174.0" mnemonicParsing="false"
-                                  onAction="#editShapeArea" text="%edit.shape.area"/>
-                        <Button fx:id="shapeArea" layoutX="34.0" layoutY="256.0" mnemonicParsing="false"
-                                onAction="#shapeAreaAction" text="%shape.area.button"/>
-                    </children>
-                </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="305.0" prefWidth="180.0" />
             </content>
         </ScrollPane>
     </left>
+   <bottom>
+      <Pane blendMode="GREEN" prefHeight="42.0" prefWidth="615.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="267.0" fx:id="utcClock" layoutY="13.0" text="Label" />
+         </children></Pane>
+   </bottom>
 </BorderPane>
