@@ -52,6 +52,8 @@ public class RootController implements Initializable {
     private ResourceBundle messages;
     @FXML
     private Label utcClock;
+    @FXML
+    private Label localClock;
 
     @FXML
     private void closeHandler() {
@@ -233,7 +235,7 @@ public class RootController implements Initializable {
         }
     }
 
-    private void UtcTime() {
+    private void utcTime() {
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.seconds(0),
                         new EventHandler<ActionEvent>() {
@@ -254,12 +256,34 @@ public class RootController implements Initializable {
         timeline.play();
     }
 
+    private void localTime() {
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(0),
+                        new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent actionEvent) {
+                                Calendar time = Calendar.getInstance();
+                                String hourString = Utils.pad(2, ' ', time.get(Calendar.HOUR) == 0 ? "12" : time.get(Calendar.HOUR) + "");
+                                String minuteString = Utils.pad(2, '0', time.get(Calendar.MINUTE) + "");
+                                String secondString = Utils.pad(2, '0', time.get(Calendar.SECOND) + "");
+                                String ampmString = time.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM";
+                                localClock.setText(hourString + ":" + minuteString + ":" + secondString + " " + ampmString);
+                            }
+                        }
+                ),
+                new KeyFrame(Duration.seconds(1))
+        );
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+    }
+
     private void initializeComponent() {
 
         wwj = new WorldWindowGLJPanel();
         Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
         wwj.setModel(m);
-        UtcTime();
+        utcTime();
+        localTime();
     }
 
     @Override

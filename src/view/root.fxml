@@ -53,10 +53,14 @@
             </content>
         </ScrollPane>
     </left>
-   <bottom>
-      <Pane blendMode="GREEN" prefHeight="42.0" prefWidth="615.0" BorderPane.alignment="CENTER">
-         <children>
-            <Label layoutX="267.0" fx:id="utcClock" layoutY="13.0" text="Label" />
-         </children></Pane>
-   </bottom>
+    <bottom>
+        <Pane blendMode="GREEN" prefHeight="42.0" prefWidth="615.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="utcClock" layoutX="480.0" layoutY="13.0" text="Label" />
+                <Label layoutX="553.0" layoutY="13.0" text="%utc.time" />
+            <Label layoutX="361.0" layoutY="13.0" text="%local.time" />
+            <Label fx:id="localClock" layoutX="289.0" layoutY="13.0" text="Local" />
+            </children>
+        </Pane>
+    </bottom>
 </BorderPane>
