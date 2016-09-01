@@ -7,14 +7,22 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwindx.examples.RubberSheetImage;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.embed.swing.SwingNode;
-import javafx.scene.control.Alert;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.*;
+import javafx.util.Duration;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * Created by mohammad on 8/13/2016.
@@ -74,5 +82,28 @@ public class Utils {
         sb.append(s);
 
         return sb.toString();
+    }
+
+    public static void showTime(javafx.scene.control.Label showingLable, boolean isUTC) {
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(0),
+                        actionEvent -> {
+                            Calendar time ;
+                            if(isUTC) {
+                                time = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                            }else {
+                                time = Calendar.getInstance();
+                            }
+                            String hourString = Utils.pad(2, ' ', time.get(Calendar.HOUR) == 0 ? "12" : time.get(Calendar.HOUR) + "");
+                            String minuteString = Utils.pad(2, '0', time.get(Calendar.MINUTE) + "");
+                            String secondString = Utils.pad(2, '0', time.get(Calendar.SECOND) + "");
+                            String ampmString = time.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM";
+                            showingLable.setText(hourString + ":" + minuteString + ":" + secondString + " " + ampmString);
+                        }
+                ),
+                new KeyFrame(Duration.seconds(1))
+        );
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
     }
 }

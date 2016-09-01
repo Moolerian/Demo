@@ -10,32 +10,32 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.WorldMapLayer;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
-import gov.nasa.worldwindx.examples.RubberSheetImage;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import model.Shape;
 import util.DBUtils;
 import util.UTF8Control;
 import util.Utils;
 
+import java.awt.*;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 import static util.Constants.*;
 
@@ -44,7 +44,6 @@ public class RootController implements Initializable {
     private Layer worldMapLayer;
     private Layer compassLayer;
     private Layer scaleLayer;
-    private RubberSheetImage.SurfaceImageEntry surfaceImageEntry;
 
     @FXML
     private BorderPane borderPane;
@@ -53,7 +52,11 @@ public class RootController implements Initializable {
     @FXML
     private Label utcClock;
     @FXML
+    private Label utcClockLabel;
+    @FXML
     private Label localClock;
+    @FXML
+    private Label localClockLabel;
 
     @FXML
     private void closeHandler() {
@@ -167,123 +170,54 @@ public class RootController implements Initializable {
         }
     }
 
-//    // TODO remove this part
+
+//    // TODO Move to icon Bar
 //    @FXML
-//    private void editShapeToggle(ActionEvent e) {
-//        CheckBox editShapeToggle = (CheckBox) e.getSource();
-//        if (surfaceImageEntry != null) {
-//            if (editShapeToggle.isSelected()) {
-//                surfaceImageEntry.getEditor().setArmed(true);
-//                LayerList layers = wwj.getModel().getLayers();
-//                markerLayer = wwj.getModel().getLayers().getLayerByName("Marker Layer");
-//                layers.remove(markerLayer);
-//            } else {
-//                surfaceImageEntry.getEditor().setArmed(false);
-//            }
+//    private void shapeAreaAction() {
+//        try {
+//            UTF8Control utf8Control = new UTF8Control();
+//            ResourceBundle bundle = utf8Control.newBundle("resource/ApplicationResources",
+//                    new Locale("fa"), null, ClassLoader.getSystemClassLoader(), true);
+//
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/positionDialog.fxml"), bundle);
+//            AnchorPane page = loader.load();
+//
+//            Position referencePosition = surfaceImageEntry.getSurfaceImage().getReferencePosition();
+//            TextField latitudeField = (TextField) page.lookup("#latitudeField");
+//            latitudeField.setText(String.valueOf(referencePosition.getLatitude()));
+//            TextField longitudeField = (TextField) page.lookup("#longitudeField");
+//            longitudeField.setText(String.valueOf(referencePosition.getLongitude()));
+//
+//            // Create the dialog Stage.
+//            Stage dialogStage = new Stage();
+//            dialogStage.initModality(Modality.APPLICATION_MODAL);
+//            dialogStage.setResizable(false);
+//            dialogStage.setIconified(false);
+//            dialogStage.initOwner(MainDemo.getPrimaryStage());
+//            Scene scene = new Scene(page);
+//            dialogStage.setScene(scene);
+//
+//
+//            // Show the dialog and wait until the user closes it
+//            dialogStage.showAndWait();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
 //        }
 //    }
-
-//    // TODO remove this part
-//    @FXML
-//    private void editShapeArea(ActionEvent e){
-//        CheckBox editShapeArea = (CheckBox) e.getSource();
-//        if (surfaceImageEntry != null) {
-//            if (editShapeArea.isSelected()) {
-//                surfaceImageEntry.getEditor().setArmed(true);
-//                LayerList layers = wwj.getModel().getLayers();
-//                layers.add(markerLayer);
-//            } else {
-//                LayerList layers = wwj.getModel().getLayers();
-//                layers.remove(markerLayer);
-//            }
-//        }
-//    }
-
-
-    // TODO Move to icon Bar
-    @FXML
-    private void shapeAreaAction() {
-        try {
-            UTF8Control utf8Control = new UTF8Control();
-            ResourceBundle bundle = utf8Control.newBundle("resource/ApplicationResources",
-                    new Locale("fa"), null, ClassLoader.getSystemClassLoader(), true);
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/positionDialog.fxml"), bundle);
-            AnchorPane page = loader.load();
-
-            Position referencePosition = surfaceImageEntry.getSurfaceImage().getReferencePosition();
-            TextField latitudeField = (TextField) page.lookup("#latitudeField");
-            latitudeField.setText(String.valueOf(referencePosition.getLatitude()));
-            TextField longitudeField = (TextField) page.lookup("#longitudeField");
-            longitudeField.setText(String.valueOf(referencePosition.getLongitude()));
-
-            // Create the dialog Stage.
-            Stage dialogStage = new Stage();
-            dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.setResizable(false);
-            dialogStage.setIconified(false);
-            dialogStage.initOwner(MainDemo.getPrimaryStage());
-            Scene scene = new Scene(page);
-            dialogStage.setScene(scene);
-
-
-            // Show the dialog and wait until the user closes it
-            dialogStage.showAndWait();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void utcTime() {
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(0),
-                        new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent actionEvent) {
-                                Calendar time = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                                String hourString = Utils.pad(2, ' ', time.get(Calendar.HOUR) == 0 ? "12" : time.get(Calendar.HOUR) + "");
-                                String minuteString = Utils.pad(2, '0', time.get(Calendar.MINUTE) + "");
-                                String secondString = Utils.pad(2, '0', time.get(Calendar.SECOND) + "");
-                                String ampmString = time.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM";
-                                utcClock.setText(hourString + ":" + minuteString + ":" + secondString + " " + ampmString);
-                            }
-                        }
-                ),
-                new KeyFrame(Duration.seconds(1))
-        );
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
-    }
-
-    private void localTime() {
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(0),
-                        new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent actionEvent) {
-                                Calendar time = Calendar.getInstance();
-                                String hourString = Utils.pad(2, ' ', time.get(Calendar.HOUR) == 0 ? "12" : time.get(Calendar.HOUR) + "");
-                                String minuteString = Utils.pad(2, '0', time.get(Calendar.MINUTE) + "");
-                                String secondString = Utils.pad(2, '0', time.get(Calendar.SECOND) + "");
-                                String ampmString = time.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM";
-                                localClock.setText(hourString + ":" + minuteString + ":" + secondString + " " + ampmString);
-                            }
-                        }
-                ),
-                new KeyFrame(Duration.seconds(1))
-        );
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
-    }
 
     private void initializeComponent() {
 
         wwj = new WorldWindowGLJPanel();
         Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
         wwj.setModel(m);
-        utcTime();
-        localTime();
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        utcClockLabel.setTranslateX(screenSize.getWidth() / 2);
+        utcClock.setTranslateX(screenSize.getWidth() / 2 - 10);
+
+        Utils.showTime(utcClock, true);
+        Utils.showTime(localClock, false);
     }
 
     @Override
@@ -313,39 +247,13 @@ public class RootController implements Initializable {
             e.printStackTrace();
         }
 
-        // TODO replace with lambda expression
-//        comboBox.valueProperty().addListener(new ChangeListener<Shape>() {
-//            @Override
-//            public void changed(ObservableValue<? extends Shape> observable, Shape oldValue, Shape newValue) {
-//                String oldShapeName = oldValue.getImage();
-//                if (oldShapeName != null) {
-//                    Layer oldShapeLayer = wwj.getModel().getLayers().getLayerByName(oldShapeName);
-//                    wwj.getModel().getLayers().remove(oldShapeLayer);
-//                }
-//                if (newValue.getId() != null) {
-//                    editShapeToggle.setDisable(false);
-//                    editShapeArea.setDisable(false);
-//                    shapeArea.setDisable(false);
-//                    File imageFile = new File("src/resource/images/" + newValue.getImage());
-//                    surfaceImageEntry = Utils.addSurfaceImage(imageFile, wwj);
-//                } else {
-//                    editShapeToggle.setDisable(true);
-//                    editShapeArea.setDisable(true);
-//                    shapeArea.setDisable(true);
-//                }
-//            }
-//        });
-
         borderPane.setRight(Utils.buildWW(wwj));
 
     }
 
 
-    public static WorldWindowGLJPanel getWwj() {
+    static WorldWindowGLJPanel getWwj() {
         return wwj;
     }
 
-    public static void setWwj(WorldWindowGLJPanel wwj) {
-        RootController.wwj = wwj;
-    }
 }
