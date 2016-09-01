@@ -6,6 +6,7 @@ import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.render.SurfaceImage;
+import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwindx.examples.RubberSheetImage;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -50,7 +51,7 @@ public class Utils {
         BufferedImage image;
         try {
             image = ImageIO.read(file);
-            Position position =  new Position(LatLon.fromDegrees(35.746179170384686d, 51.20007936255699d), 0d);
+            Position position = new Position(LatLon.fromDegrees(35.746179170384686d, 51.20007936255699d), 0d);
             double lat = position.getLatitude().radians;
             double lon = position.getLongitude().radians;
             double sizeInMeters = 50000;
@@ -69,7 +70,7 @@ public class Utils {
         return surfaceImageEntry;
     }
 
-    public static void gotToPosition(WorldWindowGLJPanel wwj , Position position , double elevation){
+    public static void gotToPosition(WorldWindowGLJPanel wwj, Position position, double elevation) {
         View view = wwj.getView();
         view.goTo(position, elevation);
     }
@@ -88,10 +89,10 @@ public class Utils {
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.seconds(0),
                         actionEvent -> {
-                            Calendar time ;
-                            if(isUTC) {
+                            Calendar time;
+                            if (isUTC) {
                                 time = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                            }else {
+                            } else {
                                 time = Calendar.getInstance();
                             }
                             String hourString = Utils.pad(2, ' ', time.get(Calendar.HOUR) == 0 ? "12" : time.get(Calendar.HOUR) + "");
@@ -105,5 +106,18 @@ public class Utils {
         );
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+    }
+
+    static {
+        try {
+            String architecture = System.getProperty("os.arch");
+            if ("x86".equals(architecture))
+                System.loadLibrary("WebView32");
+            else
+                System.loadLibrary("WebView64");
+        } catch (Throwable t) {
+            String message = Logging.getMessage("WebView.ExceptionCreatingWebView", t);
+            Logging.logger().severe(message);
+        }
     }
 }

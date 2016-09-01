@@ -8,8 +8,12 @@ import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.layers.WorldMapLayer;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
+import gov.nasa.worldwindx.examples.util.BalloonController;
+import gov.nasa.worldwindx.examples.util.HotSpotController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,10 +21,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
@@ -57,6 +60,8 @@ public class RootController implements Initializable {
     private Label localClock;
     @FXML
     private Label localClockLabel;
+    @FXML
+    private MenuBar menuBar;
 
     @FXML
     private void closeHandler() {
@@ -93,7 +98,6 @@ public class RootController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/latLonDialog.fxml"), bundle);
             BorderPane page = loader.load();
 
-            // Create the dialog Stage.
             Stage dialogStage = new Stage();
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.setResizable(false);
@@ -101,11 +105,9 @@ public class RootController implements Initializable {
             Scene scene = new Scene(page);
             dialogStage.setScene(scene);
 
-            // Set the person into the controller.
             LatLonDialogController controller = loader.getController();
             controller.setDialogStage(dialogStage);
 
-            // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
 
         } catch (Exception e) {
@@ -143,7 +145,6 @@ public class RootController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/help.fxml"), bundle);
             AnchorPane page = loader.load();
 
-            // Create the dialog Stage.
             Stage dialogStage = new Stage();
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.setResizable(false);
@@ -151,7 +152,6 @@ public class RootController implements Initializable {
             Scene scene = new Scene(page);
             dialogStage.setScene(scene);
 
-            // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
 
         } catch (Exception e) {
@@ -170,42 +170,6 @@ public class RootController implements Initializable {
         }
     }
 
-
-//    // TODO Move to icon Bar
-//    @FXML
-//    private void shapeAreaAction() {
-//        try {
-//            UTF8Control utf8Control = new UTF8Control();
-//            ResourceBundle bundle = utf8Control.newBundle("resource/ApplicationResources",
-//                    new Locale("fa"), null, ClassLoader.getSystemClassLoader(), true);
-//
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/positionDialog.fxml"), bundle);
-//            AnchorPane page = loader.load();
-//
-//            Position referencePosition = surfaceImageEntry.getSurfaceImage().getReferencePosition();
-//            TextField latitudeField = (TextField) page.lookup("#latitudeField");
-//            latitudeField.setText(String.valueOf(referencePosition.getLatitude()));
-//            TextField longitudeField = (TextField) page.lookup("#longitudeField");
-//            longitudeField.setText(String.valueOf(referencePosition.getLongitude()));
-//
-//            // Create the dialog Stage.
-//            Stage dialogStage = new Stage();
-//            dialogStage.initModality(Modality.APPLICATION_MODAL);
-//            dialogStage.setResizable(false);
-//            dialogStage.setIconified(false);
-//            dialogStage.initOwner(MainDemo.getPrimaryStage());
-//            Scene scene = new Scene(page);
-//            dialogStage.setScene(scene);
-//
-//
-//            // Show the dialog and wait until the user closes it
-//            dialogStage.showAndWait();
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     private void initializeComponent() {
 
         wwj = new WorldWindowGLJPanel();
@@ -216,6 +180,10 @@ public class RootController implements Initializable {
         utcClockLabel.setTranslateX(screenSize.getWidth() / 2);
         utcClock.setTranslateX(screenSize.getWidth() / 2 - 10);
 
+        localClockLabel.setTranslateX(screenSize.getWidth() / 2);
+        localClock.setTranslateX(screenSize.getWidth() / 2 - 10);
+
+        menuBar.setPrefWidth(screenSize.getWidth());
         Utils.showTime(utcClock, true);
         Utils.showTime(localClock, false);
     }
@@ -225,7 +193,6 @@ public class RootController implements Initializable {
         initializeComponent();
 
         messages = resources;
-        // remove WorldMap and Compass layer in order to make it in toggle manner
         // TODO move it to a separate method
         worldMapLayer = wwj.getModel().getLayers().getLayerByName("World Map");
         wwj.getModel().getLayers().remove(worldMapLayer);
@@ -249,6 +216,36 @@ public class RootController implements Initializable {
 
         borderPane.setRight(Utils.buildWW(wwj));
 
+    }
+
+    protected HotSpotController hotSpotController;
+    protected BalloonController balloonController;
+
+    @FXML
+    private void addBalloon() {
+        // Add a controller to send input events to BrowserBalloons.
+        this.hotSpotController = new HotSpotController(wwj);
+        // Add a controller to handle link and navigation events in BrowserBalloons.
+        this.balloonController = new BalloonController(wwj);
+
+        Position position =  Position.fromDegrees(35.746179170384686d, 51.20007936255699d);
+        AbstractBrowserBalloon balloon = new GlobeBrowserBalloon("salaaaaaaaaaaaaaam", position);
+
+        BalloonAttributes attrs = new BasicBalloonAttributes();
+        attrs.setSize(new Size(Size.NATIVE_DIMENSION, 0d, null, Size.NATIVE_DIMENSION, 0d, null));
+        balloon.setAttributes(attrs);
+
+        PointPlacemark placemark = new PointPlacemark(position);
+        placemark.setLabelText("Click to open balloon");
+
+        placemark.setValue(AVKey.BALLOON, balloon);
+
+        RenderableLayer layer = new RenderableLayer();
+        layer.setName("Web Browser Balloons");
+        layer.addRenderable(balloon);
+        layer.addRenderable(placemark);
+
+        wwj.getModel().getLayers().add(layer);
     }
 
 
